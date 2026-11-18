@@ -66,5 +66,13 @@ The installer is not signed with a developer certificate (ad-hoc): if macOS warn
 
 ---
 
+## License / Ліцензія
+
+🇬🇧 The original code and documentation are released under the [MIT License](LICENSE). The firmware (`firmware/`) and everything in `legacy-drivers/` belong to Avid / M-Audio and are **not** covered by it.
+
+🇺🇦 Власний код і документація поширюються за [ліцензією MIT](LICENSE). Прошивка (`firmware/`) і все в `legacy-drivers/` належать Avid / M-Audio і **не** підпадають під неї.
+
+---
+
 *Unofficial project, not affiliated with or supported by M-Audio or Avid. Use at your own risk.*
 *Неофіційний проєкт, не пов'язаний з M-Audio чи Avid і не підтримується ними. Використовуйте на власний ризик.*
