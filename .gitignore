@@ -1,0 +1,5 @@
+.DS_Store
+New/bin/
+New/build/
+New/.build/
+New/usb-kernel*.log

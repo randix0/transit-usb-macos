@@ -1,0 +1,4 @@
+"INSTALL_TITLE" = "Install Transit USB";
+"INSTALL_DESC" = "Installs the Transit USB app and the helper that loads the Transit's firmware each time it is plugged in.";
+"UNINSTALL_TITLE" = "Uninstall Transit USB";
+"UNINSTALL_DESC" = "Removes the app, the firmware helper and its log. Your Transit will stop working on this Mac until you install again.";

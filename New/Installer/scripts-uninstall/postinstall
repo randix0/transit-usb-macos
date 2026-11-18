@@ -1,0 +1,15 @@
+#!/bin/sh
+# Removes everything the Transit USB installer put on the system.
+LABEL="com.local.transit-usb"
+U="$(stat -f%Su /dev/console)"
+killall TransitUSB 2>/dev/null
+if [ -n "$U" ] && [ "$U" != "root" ]; then
+  UID_="$(id -u "$U")"; HOME_="$(dscl . -read "/Users/$U" NFSHomeDirectory | awk '{print $2}')"
+  launchctl bootout "gui/$UID_/$LABEL" 2>/dev/null
+  rm -f "$HOME_/Library/LaunchAgents/$LABEL.plist" "$HOME_/Library/Logs/transit-usb.log"
+  rm -rf "$HOME_/Library/Application Support/TransitUSB"
+fi
+rm -rf "/Applications/Transit USB.app"
+pkgutil --forget com.local.transit-usb.pkg >/dev/null 2>&1
+pkgutil --forget com.local.transit-usb.uninstall >/dev/null 2>&1
+exit 0

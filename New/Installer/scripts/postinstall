@@ -1,0 +1,27 @@
+#!/bin/sh
+# Runs as root after the app is copied to /Applications. Sets up the per-user firmware auto-loader.
+APP="/Applications/Transit USB.app"
+U="$(stat -f%Su /dev/console)"
+[ -z "$U" ] || [ "$U" = "root" ] && exit 0
+UID_="$(id -u "$U")"; HOME_="$(dscl . -read "/Users/$U" NFSHomeDirectory | awk '{print $2}')"
+LABEL="com.local.transit-usb"
+PLIST="$HOME_/Library/LaunchAgents/$LABEL.plist"
+mkdir -p "$HOME_/Library/LaunchAgents"
+cat > "$PLIST" <<PL
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>$LABEL</string>
+  <key>ProgramArguments</key><array><string>$APP/Contents/Helpers/transit-usb</string><string>daemon</string><string>$APP/Contents/Resources/ma006101.bin</string></array>
+  <key>RunAtLoad</key><true/><key>KeepAlive</key><true/>
+  <key>StandardOutPath</key><string>$HOME_/Library/Logs/transit-usb.log</string>
+  <key>StandardErrorPath</key><string>$HOME_/Library/Logs/transit-usb.log</string>
+</dict></plist>
+PL
+chown "$U" "$PLIST"; chmod 644 "$PLIST"
+# remove the pre-installer (install.sh) copy if present
+rm -rf "$HOME_/Library/Application Support/TransitUSB"
+launchctl bootout "gui/$UID_/$LABEL" 2>/dev/null
+launchctl bootstrap "gui/$UID_" "$PLIST" 2>/dev/null
+xattr -dr com.apple.quarantine "$APP" 2>/dev/null
+exit 0
