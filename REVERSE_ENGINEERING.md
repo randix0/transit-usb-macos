@@ -1,6 +1,6 @@
 # M-Audio Transit USB 1.8.0 — reverse-engineering notes
 
-Source: `Old/M-Audio Transit USB.pkg` (Sep 2009). Payload: `MAudioTransitUSBJag.kext` (ppc/i386/x86_64),
+Source: `legacy-drivers/M-Audio Transit USB.pkg` (Sep 2009). Payload: `MAudioTransitUSBJag.kext` (ppc/i386/x86_64),
 `TransitUSBCS` config daemon (StartupItem), prefPane, firmware loader.
 
 ## Findings
@@ -48,7 +48,7 @@ therefore not host-loaded by any M-Audio Mac package; 0763:2806/dfuIDLE is likel
 ## Firmware found: Transit_6_0_1_5_10_0_5131.exe (Windows driver 6.0.1)
 InstallShield wrapper -> MSI32 resource -> Installer.cab -> `DfuBIN` = `ma006101.bin` (5803 B, sha256 978942744c0c…d9b4),
 installed by `DfuINF` for `USB\VID_0763&PID_2806` (FirmwareFile=ma006101.bin, MaximumTransferSize 4096). Image = 8051 code with
-a header (`27 12 34`, VID 0763, PID 2006, ver 0101). Copy: `New/firmware/ma006101.bin`.
+a header (`27 12 34`, VID 0763, PID 2006, ver 0101). Copy: `firmware/ma006101.bin`.
 Protocol (per Windows INF + Linux madfuload): DFU on interface 0, 64-byte DNLOAD blocks (wValue = block no.), GETSTATUS
 after each, zero-length DNLOAD, GETSTATUS, bus reset -> re-enumerates as 0763:2006. RAM-only; lost at power-off.
 Tool: `TRANSIT_PID=10246 ./bin/transit-usb load-firmware firmware/ma006101.bin`.
@@ -86,7 +86,7 @@ Ideas: older/full-speed-only hub, USB-2 hub without TT, Linux/Windows host (old-
 Same device + Windows driver 6.0.1 (firmware ma006101.bin via DfuSYS): works, audio plays. So the hardware and firmware image are fine;
 the failure on the Apple Silicon Mac is host-side enumeration (xHCI SET_ADDRESS timeout after firmware start).
 
-## USBPcap capture of the working Windows 7 flow (Old/transit.pcapng, transit_2.pcapng)
+## USBPcap capture of the working Windows 7 flow (legacy-drivers/transit.pcapng, transit_2.pcapng)
 DFU device 0763:2806 (bcdUSB 1.00, class FE/01, EP0 max packet 64) -> SET_CONFIGURATION(1) -> 91x DFU_DNLOAD (wValue = block 0..0x5a,
 64 B each, 0x2b B last) with GETSTATUS after every block (state 5) -> zero-length DNLOAD block 0x5b -> GETSTATUS =
 `00 00 00 20 07 00` (OK, poll timeout 3rd byte 0x20, state 7 = manifest).
